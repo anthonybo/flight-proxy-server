@@ -31,6 +31,31 @@ app.get('/api/flights', async (req, res) => {
   }
 });
 
+app.get('/api/absb/flights', async (req, res) => {
+  try {
+    const apiKey = process.env.ADSB_API_KEY; // Access the API key from the environmental variable
+    const latitudeValue = 34.624500;
+    const longitudeValue = -112.395859;
+    
+    const apiUrl = `https://adsbexchange-com1.p.rapidapi.com/v2/lat/${latitudeValue}/lon/${longitudeValue}/dist/20/`;
+    const headers = {
+      'X-RapidAPI-Key': apiKey,
+      'X-RapidAPI-Host': 'adsbexchange-com1.p.rapidapi.com'
+    };
+
+    console.log('ADSBexchange API URL:', apiUrl);
+
+    const response = await axios.get(apiUrl, { headers });
+
+    console.log('ADSBexchange API RES:', response.data);
+
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching flights from ABSB API:', error.message);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 app.listen(PORT, () => {
   console.log(`Proxy server is running on port ${PORT}`);
 });
